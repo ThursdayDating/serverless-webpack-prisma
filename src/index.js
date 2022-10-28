@@ -48,7 +48,7 @@ class ServerlessWebpackPrisma {
       if (this.getDepsParam()) this.installPrismaPackage({ cwd });
       this.copyPrismaSchemaToFunction({ functionName, cwd, prismaDir });
       this.generatePrismaSchema({ functionName, cwd });
-      this.deleteUnusedEngines({ functionName, cwd });
+      if (this.getDeleteUnusedEngines()) this.deleteUnusedEngines({ functionName, cwd });
       if (this.getDepsParam()) this.removePrismaPackage({ cwd });
     }
   }
@@ -142,6 +142,12 @@ class ServerlessWebpackPrisma {
       'service.custom.prisma.prismaPath',
       this.serverless.config.servicePath
     );
+  }
+
+  getDeleteUnusedEngines() {
+    const setting = 'service.custom.prisma.deleteUnusedEngines';
+    const raw = _.get(this.serverless, setting, true);
+    return ((raw === true) || (raw === 'true'));
   }
 
   getDepsParam() {
